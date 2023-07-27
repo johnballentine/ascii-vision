@@ -26,27 +26,28 @@ like GPT-4, which primarily deal with text data.
    pip install opencv-python
    pip install opencv-python-headless
    pip install pillow
-Clone this repository or download the ascii_converter.py script.
+   ```
+3. Clone this repository or download the ascii_converter.py script.
 
-Run the script with the following command:
+4. Run the script with the following command:
 
-bash
-Copy code
+```bash
 python ascii_converter.py <path_to_image> <desired_width>
 Replace <path_to_image> with the path to the image you want to convert and <desired_width>
 with the desired width of the ASCII output in characters.
+```
 
-The script will display the ASCII art output in the console.
+5. The script will display the ASCII art output in the console.
 
 Note: The Canny edge detection parameters (threshold values) have been set to 100 and 200, but they
 may be adjusted depending on the specific image and edge detection requirements.
 
 Feel free to experiment with different images and width settings to create unique ASCII art representations!
 
-Example
+## Example
 Here's an example of how to use the script:
 
-bash
-Copy code
+```bash
 python ascii_converter.py /path/to/image.jpg 80
 This will convert the image to ASCII art with a width of 80 characters and display the result in the console.
+```
