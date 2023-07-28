@@ -18,9 +18,9 @@ async def read_item(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/ascii/")
-async def get_ascii_art(request: Request, url: Optional[str] = "https://www.alleycat.org/wp-content/uploads/2019/03/FELV-cat.jpg", canny: Optional[bool] = False):
+async def get_ascii_art(request: Request, url: Optional[str] = "https://www.alleycat.org/wp-content/uploads/2019/03/FELV-cat.jpg", canny: Optional[bool] = False, width: Optional[int] = 80):
     try:
-        ascii_art = url_to_ascii(url, canny=canny)
+        ascii_art = url_to_ascii(url, width=width, canny=canny)
         return templates.TemplateResponse("index.html", {"request": request, "ascii_art": ascii_art})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

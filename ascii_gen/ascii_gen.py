@@ -44,16 +44,17 @@ def image_to_ascii(image, width: int, height: int, from_canny: bool = False):
     
     return ascii_str
 
-def convert_to_ascii(image_bytes, canny=True):  # Set the default value of canny to True
+def convert_to_ascii(image_bytes, width=80, canny=True):
     # Load image if BytesIO object is provided
     if isinstance(image_bytes, BytesIO):
         image = cv2.imdecode(np.frombuffer(image_bytes.read(), np.uint8), cv2.IMREAD_GRAYSCALE)
 
-        # Get the folder path to save the images and ASCII art
-        folder_path = os.getcwd()  # You can change this to the desired folder path
+        # Calculate height to maintain aspect ratio, divide by 2 for monospace font aspect ratio
+        aspect_ratio = image.shape[0] / image.shape[1]
+        height = int(width * aspect_ratio / 2)
 
         # Save the original image
-        orig_filename = make_filename(folder_path, "image_out-orig-", "png")
+        orig_filename = make_filename("output", "image_out-orig-", "png")
         cv2.imwrite(orig_filename, image)
 
         if canny:
@@ -61,17 +62,17 @@ def convert_to_ascii(image_bytes, canny=True):  # Set the default value of canny
             edges = get_canny(image)
 
             # Save the Canny edge detection output
-            canny_filename = make_filename(folder_path, "image_out-canny-", "png")
+            canny_filename = make_filename("output", "image_out-canny-", "png")
             cv2.imwrite(canny_filename, edges)
 
             # Use Canny edges for ASCII conversion
             image = edges
 
         # Convert to ASCII art
-        ascii_art = image_to_ascii(image, 80, 30, from_canny=canny)
+        ascii_art = image_to_ascii(image, width, height, from_canny=canny)
 
         # Save the ASCII art as a text file
-        ascii_filename = make_filename(folder_path, "image_out-ascii-", "txt")
+        ascii_filename = make_filename("output", "image_out-ascii-", "txt")
         with open(ascii_filename, "w") as file:
             file.write(ascii_art)
 
@@ -79,12 +80,16 @@ def convert_to_ascii(image_bytes, canny=True):  # Set the default value of canny
 
     return ascii_art
 
-def url_to_ascii(image_url, canny=True):  # Set the default value of canny to True
+
+def url_to_ascii(image_url, width=80, canny=True):
     # Get BytesIO object of the image from the URL
     image_bytes = url_to_image(image_url)
+    
     # Convert to ASCII art using convert_to_ascii with the canny argument
-    ascii_art = convert_to_ascii(image_bytes, canny=canny)  # Pass the canny argument down
+    ascii_art = convert_to_ascii(image_bytes, width=width, canny=canny)
+    
     return ascii_art
+
 
 def url_to_image(image_url):
     # Download the image from the URL and return as BytesIO
@@ -123,12 +128,14 @@ def make_filename(folder_path, base_filename, extension):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert an image to ASCII art.")
     parser.add_argument("--url", type=str, help="URL of the image to convert to ASCII art")
-    parser.add_argument("--canny", action="store_true", help="Enable Canny edge detection")  # Changed the argument name
+    parser.add_argument("--canny", action="store_true", help="Enable Canny edge detection")
+    parser.add_argument("--width", type=int, default=80, help="Width of the ASCII art (default is 80 characters)")
     args = parser.parse_args()
 
     if args.url:
-        ascii_art_url = url_to_ascii(args.url, canny=args.canny)  # Pass the canny argument here
+        ascii_art_url = url_to_ascii(args.url, width=args.width, canny=args.canny)  # Pass the width argument here
         print("Image URL to ASCII Art:")
         print(ascii_art_url)
     else:
         print("Please provide a valid URL using --url argument.")
+

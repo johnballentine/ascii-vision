@@ -5,15 +5,55 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASCII Art Generator</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #ascii_art {
+            flex-grow: 1;
+            resize: none; /* Optionally prevent manual resize */
+        }
+        form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+        #copyButton {
+            margin-right: 15px;
+        }
+    </style>
 </head>
 <body>
-    <h1>ASCII Art Generator</h1>
+    <h1 style="margin-left: 15px;">ASCII Art Generator</h1>
     <form action="/ascii/" method="get">
-        <label for="url">Enter Image URL:</label>
-        <input type="text" id="url" name="url" value="https://easydrawingart.com/wp-content/uploads/2019/07/how-to-draw-a-cat.jpg.webp">
-        <input type="submit" value="Generate ASCII Art">
+        <div>
+            <label for="url">Enter Image URL:</label>
+            <input type="text" id="url" name="url" value="{{ request.query_params['url'] if 'url' in request.query_params else 'https://easydrawingart.com/wp-content/uploads/2019/07/how-to-draw-a-cat.jpg.webp' }}">
+            <label for="width">Enter Width:</label>
+            <input type="number" id="width" name="width" value="{{ request.query_params['width'] if 'width' in request.query_params else '80' }}">
+            <input type="checkbox" id="canny" name="canny" {{ 'checked' if request.query_params.get('canny', False) else '' }}>
+            <label for="canny">Use Canny</label>
+            <input type="submit" value="Generate ASCII Art">
+        </div>
+        <button id="copyButton" type="button">Copy to Clipboard</button>
     </form>
     <br>
-    <textarea id="ascii_art" rows="30" cols="80" readonly>{{ ascii_art }}</textarea>
+    <textarea id="ascii_art">{{ ascii_art }}</textarea>
+    <script>
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const textarea = document.getElementById('ascii_art');
+            textarea.select();
+            document.execCommand('copy');
+            // Deselect after copying
+            textarea.selectionStart = textarea.selectionEnd;
+            // Alert the user
+            alert("Copied ASCII art to clipboard!");
+        });
+    </script>
 </body>
 </html>
