@@ -1,12 +1,23 @@
+import os
+import argparse
 import cv2
 import numpy as np
+import requests
+from io import BytesIO
 
-def get_canny(image_path):
-    # Load the image
-    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+def get_canny(image):
+    # Invert brightness for higher contrast
+    inverted_image = invert_brightness(image)
+
     # Perform Canny edge detection
-    edges = cv2.Canny(img, 100, 200)
+    edges = cv2.Canny(inverted_image, 100, 200)
+
     return edges
+
+def invert_brightness(image):
+    # Invert the brightness of the image
+    inverted_image = 255 - image
+    return inverted_image
 
 def image_to_ascii(image, width: int, height: int):
     # List of characters to represent various shades in ASCII
@@ -17,6 +28,9 @@ def image_to_ascii(image, width: int, height: int):
 
     # Normalize the pixel values to range 0-255
     image = cv2.normalize(image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+
+    # Invert the brightness for higher contrast
+    image = invert_brightness(image)
 
     # Scale down the pixel values to the range 0-9 (corresponding to the ascii characters)
     image = image // 28
@@ -29,8 +43,78 @@ def image_to_ascii(image, width: int, height: int):
     
     return ascii_str
 
+def convert_to_ascii(image_bytes):
+    # Load image if BytesIO object is provided
+    if isinstance(image_bytes, BytesIO):
+        image = cv2.imdecode(np.frombuffer(image_bytes.read(), np.uint8), cv2.IMREAD_GRAYSCALE)
+
+        # Get Canny edges
+        edges = get_canny(image)
+
+        # Convert to ASCII art
+        ascii_art = image_to_ascii(edges, 80, 30)
+
+        # Get the folder path to save the images and ASCII art
+        folder_path = os.getcwd()  # You can change this to the desired folder path
+
+        # Save the original image
+        orig_filename = make_filename(folder_path, "image_out-orig-", "png")
+        cv2.imwrite(orig_filename, image)
+
+        # Save the Canny edge detection output
+        canny_filename = make_filename(folder_path, "image_out-canny-", "png")
+        cv2.imwrite(canny_filename, edges)
+
+        # Save the ASCII art as a text file
+        ascii_filename = make_filename(folder_path, "image_out-ascii-", "txt")
+        with open(ascii_filename, "w") as file:
+            file.write(ascii_art)
+
+        print(f"Conversion and saving completed.")
+        return ascii_art
+
+def url_to_ascii(image_url):
+    # Get BytesIO object of the image from the URL
+    image_bytes = url_to_image(image_url)
+    # Convert to ASCII art using convert_to_ascii
+    ascii_art = convert_to_ascii(image_bytes)
+    return ascii_art
+
+def url_to_image(image_url):
+    # Download the image from the URL and return as BytesIO
+    response = requests.get(image_url)
+    return BytesIO(response.content)
+
+def save_bytesio_to_png(image_bytes, base_filename="image_out-"):
+    # Get the folder path to save the image
+    folder_path = os.getcwd()  # You can change this to the desired folder path
+
+    # Generate a unique filename using the make_filename function
+    filename = make_filename(folder_path, base_filename, "png")
+
+    # Save the BytesIO image to the PNG file
+    with open(filename, "wb") as file:
+        file.write(image_bytes.getvalue())
+
+    print(f"Image saved as {filename}")
+
+def make_filename(folder_path, base_filename, extension):
+    i = 1
+    while True:
+        filename = f"{base_filename}{str(i).zfill(5)}.{extension}"
+        filepath = os.path.join(folder_path, filename)
+        if not os.path.exists(filepath):
+            return filepath
+        i += 1
+
 if __name__ == "__main__":
-    image_path = "your_image_path_here"
-    edges = get_canny(image_path)
-    ascii_art = image_to_ascii(edges, 80, 30)
-    print(ascii_art)
+    parser = argparse.ArgumentParser(description="Convert an image to ASCII art.")
+    parser.add_argument("--url", type=str, help="URL of the image to convert to ASCII art")
+    args = parser.parse_args()
+
+    if args.url:
+        ascii_art_url = url_to_ascii(args.url)
+        print("Image URL to ASCII Art:")
+        print(ascii_art_url)
+    else:
+        print("Please provide a valid URL using --url argument.")
