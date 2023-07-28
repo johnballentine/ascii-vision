@@ -2,8 +2,6 @@
 
 ![screenshot](https://github-production-user-asset-6210df.s3.amazonaws.com/8368243/256704904-eeca132f-4a61-4e6e-a8af-cb62f0061be2.png)
 
-https://github.com/johnballentine/ascii-vision/assets/8368243/eeca132f-4a61-4e6e-a8af-cb62f0061be2
-
 This tool converts an image, accessed via a URL, into ASCII art. It's designed to enable language models to interpret image data by transposing it into a textual format. Results may vary depending on the image.
 
 ## Overview
