@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Art Generator</title>
+</head>
+<body>
+    <h1>ASCII Art Generator</h1>
+    <form action="/ascii/" method="get">
+        <label for="url">Enter Image URL:</label>
+        <input type="text" id="url" name="url" value="https://easydrawingart.com/wp-content/uploads/2019/07/how-to-draw-a-cat.jpg.webp">
+        <input type="submit" value="Generate ASCII Art">
+    </form>
+    <br>
+    <textarea id="ascii_art" rows="30" cols="80" readonly>{{ ascii_art }}</textarea>
+</body>
+</html>
