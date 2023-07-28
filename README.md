@@ -4,11 +4,9 @@
 
 https://github.com/johnballentine/ascii-vision/assets/8368243/eeca132f-4a61-4e6e-a8af-cb62f0061be2
 
-This tool converts an image, accessed via a URL, into ASCII art. It's specifically designed to enable language models to interpret image data by transposing it into a textual format. 
+This tool converts an image, accessed via a URL, into ASCII art. It's designed to enable language models to interpret image data by transposing it into a textual format. Results may vary depending on the image.
 
 ## Overview
-
-Our conversion process includes:
 
 1. **Canny Edge Detection**: We leverage this computer vision algorithm to extract critical structural information from images. This technique focuses on areas with significant changes in pixel intensity (edges), distilling the image into its essential elements.
 
