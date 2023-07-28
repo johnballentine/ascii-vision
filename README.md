@@ -1,5 +1,9 @@
 # Image to ASCII Art Converter for Text-Only Language Models
 
+![screenshot](https://github-production-user-asset-6210df.s3.amazonaws.com/8368243/256704904-eeca132f-4a61-4e6e-a8af-cb62f0061be2.png)
+
+https://github.com/johnballentine/ascii-vision/assets/8368243/eeca132f-4a61-4e6e-a8af-cb62f0061be2
+
 This tool converts an image, accessed via a URL, into ASCII art. It's specifically designed to enable language models to interpret image data by transposing it into a textual format. 
 
 ## Overview
@@ -41,4 +45,11 @@ Here's a script usage example:
 ```bash
 python main.py https://example.com/path/to/image.jpg 80
 ```
+
 This command converts the image at the provided URL into ASCII art with an 80-character width and displays the result in the console.
+
+Run Web UI:
+
+```bash
+uvicorn main:app --reload
+```
